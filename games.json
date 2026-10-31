@@ -1,0 +1,13 @@
+[
+  {
+    "id": "idle-mining-empire",
+    "title": "Idle Mining Empire",
+    "category": "Strategy",
+    "controls": "Mouse or Tap",
+    "players": "1 Player",
+    "featured": true,
+    "description": "Dig deep underground shafts, hire shift managers to automate ore extraction, upgrade elevator and warehouse throughput, and scale a multi-shaft mining operation.",
+    "thumbnail": "/images/cover_idle_mining.jpg",
+    "iframe": "<iframe id=\"plyIframe\" class=\"ply-iframe\" title=\"Idle Mining Empire — UBGHyper\" allow=\"fullscreen; autoplay\" allowfullscreen=\"\" sandbox=\"allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-top-navigation-by-user-activation allow-popups\" src=\"https://ubghyper.github.io/GameList.github.io/Idle-Mining-Empire/\"></iframe>"
+  }
+]

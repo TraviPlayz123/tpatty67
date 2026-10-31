@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breakroom Arcade</title>
+    <meta
+      name="description"
+      content="Instant-play unblocked arcade and puzzle games powered by pure HTML, CSS, JavaScript, and a JSON iframe catalog."
+    />
+    <meta property="og:title" content="Breakroom Arcade" />
+    <meta
+      property="og:description"
+      content="Instant-play unblocked arcade and puzzle games powered by pure HTML, CSS, JavaScript, and a JSON iframe catalog."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f97316'/%3E%3Cpath d='M11 9l12 7-12 7V9z' fill='%23ffffff'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Top Bar Contract: Zone 1 Brand | Zone 2 Nav Links | Zone 3 Primary Action -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="#all" class="brand-wordmark" id="brandHomeLink">Breakroom Arcade</a>
+
+        <nav class="primary-nav" aria-label="Main Categories">
+          <a href="#all" class="nav-link active" data-nav-cat="All">All Games</a>
+          <a href="#arcade" class="nav-link" data-nav-cat="Arcade">Arcade</a>
+          <a href="#puzzle" class="nav-link" data-nav-cat="Puzzle">Puzzle</a>
+          <a href="#favorites" class="nav-link" data-nav-cat="Favorites">Favorites</a>
+          <a href="#json-manager" class="nav-link" id="openJsonModalNav">JSON Catalog</a>
+        </nav>
+
+        <div class="header-cta">
+          <button type="button" class="btn-primary" id="randomGameBtn">Play Random Game</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-shell">
+      <!-- CATALOG VIEW -->
+      <div id="catalogView" class="view-section">
+        <!-- Featured Hero Spotlight -->
+        <section class="hero-spotlight" id="heroSpotlight" aria-label="Featured Game">
+          <div class="hero-copy">
+            <p class="hero-kicker" id="heroMeta">Featured Game · Strategy · 1 Player</p>
+            <h1 class="hero-title" id="heroTitle">Idle Mining Empire</h1>
+            <p class="hero-description" id="heroDesc">
+              Dig deep underground shafts, hire shift managers to automate ore extraction, upgrade elevator and warehouse throughput, and scale a multi-shaft mining operation.
+            </p>
+            <div class="hero-actions">
+              <button type="button" class="btn-primary btn-lg" id="heroPlayBtn">Launch Game</button>
+              <button type="button" class="btn-secondary btn-lg" id="openCloakBtn">Tab Cloak &amp; Panic Key</button>
+            </div>
+          </div>
+          <div class="hero-media" id="heroMediaCard" role="button" tabindex="0" aria-label="Play Featured Game">
+            <img
+              id="heroImage"
+              src="/images/cover_idle_mining.jpg"
+              alt="Idle Mining Empire preview"
+              referrerpolicy="no-referrer"
+            />
+            <div class="hero-media-scrim">
+              <span class="play-affordance">Click to Launch in Iframe</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Workspace Filter & Search Bar -->
+        <section class="workspace-toolbar" aria-label="Filter and Search Games">
+          <div class="segmented-tabs" id="categoryTabs" role="tablist">
+            <button type="button" class="seg-tab active" data-cat="All">All</button>
+            <button type="button" class="seg-tab" data-cat="Arcade">Arcade</button>
+            <button type="button" class="seg-tab" data-cat="Puzzle">Puzzle</button>
+            <button type="button" class="seg-tab" data-cat="Strategy">Strategy</button>
+            <button type="button" class="seg-tab" data-cat="Sports">Sports</button>
+            <button type="button" class="seg-tab" data-cat="Favorites">Saved (<span id="favCountNum">0</span>)</button>
+          </div>
+
+          <div class="toolbar-utilities">
+            <div class="search-field">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="search"
+                id="searchInput"
+                placeholder="Search games or controls..."
+                aria-label="Search games"
+                autocomplete="off"
+              />
+            </div>
+            <button type="button" class="btn-secondary" id="addCustomGameBtn">Add Iframe Game</button>
+          </div>
+        </section>
+
+        <!-- Recently Played Strip (shown dynamically once user plays a game) -->
+        <section id="recentSection" class="recent-section hidden" aria-label="Recently Played">
+          <div class="section-heading-row">
+            <h2 class="section-title">Recently Played</h2>
+            <button type="button" class="text-action-btn" id="clearRecentBtn">Clear History</button>
+          </div>
+          <div id="recentList" class="recent-row"></div>
+        </section>
+
+        <!-- Main Games Grid -->
+        <section class="catalog-section" aria-label="Games Directory">
+          <div class="section-heading-row">
+            <h2 class="section-title" id="gridHeading">All Games</h2>
+            <p class="results-counter"><span id="resultsCount">0</span> games loaded from <code>games.json</code></p>
+          </div>
+
+          <div id="loadingState" class="empty-state hidden">
+            <h3>Loading games.json...</h3>
+            <p>Fetching your iframe catalog.</p>
+          </div>
+
+          <div id="emptyState" class="empty-state hidden">
+            <h3 id="emptyTitle">No matching games found</h3>
+            <p id="emptyDesc">Try clearing your search query or switching back to All Games.</p>
+            <button type="button" class="btn-secondary" id="resetFiltersBtn">Reset Filters</button>
+          </div>
+
+          <div id="gamesGrid" class="games-grid"></div>
+        </section>
+      </div>
+
+      <!-- PLAYER / IFRAME STAGE VIEW -->
+      <section id="playerView" class="player-view hidden" aria-label="Game Player">
+        <div class="player-topbar">
+          <button type="button" class="btn-secondary" id="backToLibraryBtn">&larr; Back to Library</button>
+
+          <div class="player-stage-actions">
+            <button type="button" class="btn-secondary" id="favStageBtn">Save Favorite</button>
+            <button type="button" class="btn-secondary" id="wideModeBtn">Theater Width</button>
+            <button type="button" class="btn-secondary" id="reloadGameBtn">Reload Iframe</button>
+            <button type="button" class="btn-primary" id="fullscreenBtn">Fullscreen</button>
+          </div>
+        </div>
+
+        <div class="iframe-stage-wrapper" id="iframeStageWrapper">
+          <!-- Exact <iframe> parsed from games.json mounts here -->
+          <div id="iframeMount" class="iframe-mount"></div>
+        </div>
+
+        <div class="player-details-panel">
+          <div class="player-info-col">
+            <p class="card-meta" id="playerMeta">Arcade · 1 Player</p>
+            <h1 class="player-game-title" id="playerTitle">Game Title</h1>
+            <p class="player-game-desc" id="playerDesc"></p>
+            <p class="controls-callout">
+              <strong>Controls:</strong> <span id="playerControls"></span>
+            </p>
+          </div>
+
+          <div class="player-json-col">
+            <div class="json-snippet-header">
+              <span>Iframe Entry in <code>games.json</code></span>
+              <div class="snippet-actions">
+                <button type="button" class="text-action-btn" id="copyIframeBtn">Copy JSON Entry</button>
+                <button type="button" class="text-action-btn danger-text hidden" id="deleteCustomBtn">Remove Custom Game</button>
+              </div>
+            </div>
+            <pre class="json-code-box"><code id="playerIframeCode"></code></pre>
+          </div>
+        </div>
+
+        <div class="more-games-section" id="moreGamesSection">
+          <h2 class="section-title">Up Next in Breakroom</h2>
+          <div id="upNextGrid" class="games-grid compact-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p class="footer-brand">Breakroom Arcade · Pure HTML, CSS, JS &amp; JSON Iframe Engine</p>
+        <div class="footer-links">
+          <button type="button" class="footer-link-btn" id="footerJsonBtn">Inspect games.json</button>
+          <span aria-hidden="true">·</span>
+          <button type="button" class="footer-link-btn" id="footerCloakBtn">Tab Cloak Settings</button>
+          <span aria-hidden="true">·</span>
+          <span>Press <kbd>[</kbd> anytime for Study Notes Decoy</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JSON CATALOG & ADD IFRAME MODAL -->
+    <div id="jsonModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="jsonModalTitle">
+      <div class="modal-panel modal-wide">
+        <div class="modal-header">
+          <h2 id="jsonModalTitle">Iframe JSON Catalog Manager</h2>
+          <button type="button" class="close-btn" data-close-modal="jsonModal" aria-label="Close modal">&times;</button>
+        </div>
+
+        <div class="modal-tabs">
+          <button type="button" class="seg-tab active" data-modal-tab="addTab">Add New Iframe Game</button>
+          <button type="button" class="seg-tab" data-modal-tab="exportTab">View / Download games.json</button>
+        </div>
+
+        <div id="addTab" class="modal-tab-body">
+          <p class="modal-subtext">
+            Add any unblocked HTML5 game by pasting its <code>&lt;iframe src="..."&gt;&lt;/iframe&gt;</code> embed code or direct URL. Custom entries save locally and can be exported straight into <code>games.json</code>.
+          </p>
+          <form id="addGameForm" class="form-grid">
+            <div class="field-group">
+              <label for="customTitle">Game Title</label>
+              <input type="text" id="customTitle" required placeholder="e.g. Retro Drift" />
+            </div>
+            <div class="field-group">
+              <label for="customCategory">Category</label>
+              <select id="customCategory">
+                <option value="Arcade">Arcade</option>
+                <option value="Puzzle">Puzzle</option>
+                <option value="Strategy">Strategy</option>
+                <option value="Sports">Sports</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="customControls">Controls</label>
+              <input type="text" id="customControls" placeholder="e.g. Arrow Keys or Mouse" />
+            </div>
+            <div class="field-group">
+              <label for="customThumbnail">Cover Image URL (Optional)</label>
+              <input type="text" id="customThumbnail" placeholder="/images/cover_idle_mining.jpg" />
+            </div>
+            <div class="field-group full-span">
+              <label for="customIframe">Iframe HTML Snippet or Game URL</label>
+              <textarea
+                id="customIframe"
+                rows="3"
+                required
+                placeholder='<iframe src="https://example.com/game/" allowfullscreen></iframe>'
+              ></textarea>
+            </div>
+            <div class="field-group full-span">
+              <label for="customDesc">Short Description</label>
+              <input type="text" id="customDesc" placeholder="Fast browser game playable right inside an iframe." />
+            </div>
+            <div class="form-actions full-span">
+              <button type="button" class="btn-secondary" data-close-modal="jsonModal">Cancel</button>
+              <button type="submit" class="btn-primary">Add to Library &amp; Launch</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="exportTab" class="modal-tab-body hidden">
+          <p class="modal-subtext">
+            Complete JSON representation of all games and their <code>iframe</code> definitions. Copy or download this file to update <code>/games.json</code>.
+          </p>
+          <pre class="json-code-box tall-code"><code id="fullJsonPreview"></code></pre>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="copyFullJsonBtn">Copy Full JSON</button>
+            <button type="button" class="btn-primary" id="downloadJsonBtn">Download games.json</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB CLOAK & BOSS KEY MODAL -->
+    <div id="cloakModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="cloakModalTitle">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <h2 id="cloakModalTitle">Tab Cloak &amp; Study Decoy</h2>
+          <button type="button" class="close-btn" data-close-modal="cloakModal" aria-label="Close modal">&times;</button>
+        </div>
+        <p class="modal-subtext">
+          Rename the browser tab title and icon, or press <kbd>[</kbd> at any moment to toggle an instant Calculus &amp; Physics study sheet screen.
+        </p>
+
+        <div class="cloak-presets">
+          <button type="button" class="cloak-preset-btn" data-cloak="default">
+            <strong>Default</strong>
+            <span>Breakroom Arcade</span>
+          </button>
+          <button type="button" class="cloak-preset-btn" data-cloak="docs">
+            <strong>Study Document</strong>
+            <span>Unit 4: Rotational Kinematics - Docs</span>
+          </button>
+          <button type="button" class="cloak-preset-btn" data-cloak="lms">
+            <strong>Course Portal</strong>
+            <span>Dashboard · Assignments &amp; Modules</span>
+          </button>
+          <button type="button" class="cloak-preset-btn" data-cloak="calc">
+            <strong>Graphing Utility</strong>
+            <span>Scientific Graphing Calculator</span>
+          </button>
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+          <button type="button" class="btn-secondary" data-close-modal="cloakModal">Done</button>
+          <button type="button" class="btn-primary" id="triggerDecoyNowBtn">Activate Study Decoy ([)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTANT STUDY NOTES DECOY OVERLAY (Triggered by `[` key) -->
+    <div id="studyDecoyOverlay" class="study-decoy hidden" aria-hidden="true">
+      <div class="study-topbar">
+        <div class="study-doc-title">AP Physics C — Chapter 7: Conservation of Linear Momentum &amp; Collisions</div>
+        <button type="button" class="study-exit-hint" id="exitDecoyBtn">Return (Press [)</button>
+      </div>
+      <div class="study-page">
+        <h2>1. Impulse-Momentum Theorem</h2>
+        <p>
+          For any closed mechanical system experiencing net external force <em>F(t)</em> over time interval <em>&Delta;t = t<sub>2</sub> &minus; t<sub>1</sub></em>, the total impulse equals the vector change in linear momentum:
+        </p>
+        <div class="study-formula">J = &int; F<sub>net</sub> dt = &Delta;p = m v<sub>f</sub> &minus; m v<sub>i</sub></div>
+
+        <h2>2. Elastic vs. Inelastic One-Dimensional Collisions</h2>
+        <p>
+          In an isolated two-body collision with zero external impulse, total linear momentum is strictly conserved across both elastic and inelastic regimes. Kinetic energy is additionally conserved only when internal restitution equals unity:
+        </p>
+        <table class="study-table">
+          <thead>
+            <tr>
+              <th>Collision Type</th>
+              <th>Momentum (&Sigma;p)</th>
+              <th>Kinetic Energy (&Sigma;K)</th>
+              <th>Restitution (e)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Perfectly Elastic</td>
+              <td>Conserved</td>
+              <td>Conserved</td>
+              <td>1.00</td>
+            </tr>
+            <tr>
+              <td>Partially Inelastic</td>
+              <td>Conserved</td>
+              <td>Thermal / Acoustic Loss</td>
+              <td>0 &lt; e &lt; 1</td>
+            </tr>
+            <tr>
+              <td>Completely Inelastic</td>
+              <td>Conserved (Shared v<sub>f</sub>)</td>
+              <td>Maximum Permitted Loss</td>
+              <td>0.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>3. Practice Scratchpad</h2>
+        <textarea
+          class="study-notes-input"
+          rows="5"
+          placeholder="Type practice steps or lecture notes here..."
+        >Given m1 = 2.4 kg at v1 = +4.5 m/s colliding elastically with stationary m2 = 1.6 kg:
+v1_final = ((m1 - m2) / (m1 + m2)) * v1 = (0.8 / 4.0) * 4.5 = 0.90 m/s
+v2_final = ((2 * m1) / (m1 + m2)) * v1 = (4.8 / 4.0) * 4.5 = 5.40 m/s</textarea>
+      </div>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

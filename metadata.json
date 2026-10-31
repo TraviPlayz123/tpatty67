@@ -1,0 +1,6 @@
+{
+  "name": "Breakroom Arcade",
+  "description": "Instant-play unblocked arcade and puzzle games powered by pure HTML, CSS, JavaScript, and a JSON iframe catalog.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
